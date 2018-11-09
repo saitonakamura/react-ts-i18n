@@ -12,5 +12,6 @@
     "noImplicitReturns": true,
     "esModuleInterop": true,
     "lib": ["es2015", "dom"]
-  }
+  },
+  "exclude": ["examples/**/*"]
 }

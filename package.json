@@ -9,8 +9,8 @@
     "test": "npm run size",
     "build": "rimraf dist & rollup --config ./rollup.config.js",
     "size": "size-limit",
-    "start:basic": "parcel examples/basic/index.html",
-    "start:dynamic": "parcel --port 1235 examples/dynamicImport/index.html"
+    "start:basic": "parcel --out-dir /parcel_dist/basic examples/basic/index.html",
+    "start:dynamic": "parcel --port 1235 --out-dir /parcel_dist/dynamic examples/dynamicImport/index.html"
   },
   "husky": {
     "hooks": {

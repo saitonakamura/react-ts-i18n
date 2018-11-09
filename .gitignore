@@ -1,4 +1,8 @@
-node_modules
-dist
+# cache
 .rpt2_cache
 .cache
+
+# artifacts
+node_modules
+parcel_dist
+dist
