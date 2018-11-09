@@ -5,7 +5,7 @@
 ## Motivation
 
 There's a lot of i18n libraries in the wild, but not all of them even have typings, let alone type safety when getting a string by key.
-So I build a tiny wrapper over react context api which allows you to pass your resource types as generics use it.
+So I build a tiny wrapper over react context api which allows you to pass your resource types as generics and use it.
 
 ## Install
 
@@ -29,7 +29,7 @@ So let's create your wrapper over the base one.
 ```typescript
 import { LangProvider, LangConsumer, ResourceRecord } from 'react-ts-i18n'
 
-// Here hoes our so-called reference resource
+// Here goes our so-called reference resource
 // We'll be using as a shape for all another resources
 const enResource = {
   title: 'My home page'
