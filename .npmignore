@@ -1,4 +1,5 @@
 node_modules
 .rpt2_cache
+.cache
 .gitignore
 rollup.config.js

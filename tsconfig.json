@@ -11,5 +11,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "esModuleInterop": true,
+    "lib": ["es2015", "dom"]
   }
 }
