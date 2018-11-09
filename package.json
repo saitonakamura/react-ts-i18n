@@ -1,6 +1,6 @@
 {
   "name": "react-ts-i18n",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tiny (1kb) type-safe focused solution for i18n in react",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
