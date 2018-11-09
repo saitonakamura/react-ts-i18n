@@ -61,7 +61,7 @@ export class LangProvider<
     const selectedResouce = this.resources[props.initialLang]
     if (this.isFetchFunc(selectedResouce)) {
       ;(this.state as any).isLoadingLang = true
-      this.loadResource(selectedResouce, props.initialLang).then(() =>
+      this.enrichResources(selectedResouce, props.initialLang).then(() =>
         this.setState({ isLoadingLang: false }),
       )
     }
@@ -86,19 +86,19 @@ export class LangProvider<
   }
 
   handleLangChange = (newLang: TLangs) => {
-    const { lang } = this.state
-    const resource = this.resources[lang]
+    const resource = this.resources[newLang]
 
     if (this.isFetchFunc(resource)) {
-      this.loadResource(resource, lang).then(() =>
-        this.setState({ lang: newLang }),
+      this.setState({ isLoadingLang: true })
+      this.enrichResources(resource, newLang).then(() =>
+        this.setState({ lang: newLang, isLoadingLang: false }),
       )
     } else {
       this.setState({ lang: newLang })
     }
   }
 
-  loadResource = (resource: FetchResourceFunc<TResource>, lang: TLangs) =>
+  enrichResources = (resource: FetchResourceFunc<TResource>, lang: TLangs) =>
     resource().then(res => {
       this.resources = { ...(this.resources as any), [lang]: res }
     })
