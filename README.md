@@ -15,9 +15,9 @@ npm i react-ts-i18n
 
 ## Basic Usage
 
-> :warn: Though basic setup is a good place to start from, I really recommend you to pay attention to (#advanced-usage)
+> ⚠ Though basic setup is a good place to start from, I really recommend you to pay attention to [Advanced Usage](#advanced-usage)
 
-You can see complete example here (examples/basic)
+You can see complete example here [examples/basic](examples/basic)
 
 ### Preparation
 
@@ -89,10 +89,10 @@ const App: React.SFC<{}> = () => (
 
 ## Advanced usage
 
-Basic examples are nice, but of course we want real world cases, when resources can be splitted by the different files and can be loaded dynamically (you don't want to load ALL available languages from the start, are you?)
-The advanced configuration is that instead of static imports we use can pass a function that returnes a Promise that has our resource?
-ES2017 `dynamic import` feature is an obvious way to go (webpack/parcel/you name it will split the chunks for you)
-You can see complete example here (examples/dynamicImport)
+Basic examples are nice, but of course we want real world cases, when resources can be splitted by the different files and can be loaded dynamically (you don't want to load ALL available languages from the start, are you?).
+The advanced configuration is that instead of static imports we use can pass a function that returnes a Promise that has our resource.
+ES2017 `dynamic import` feature is an obvious way to go (webpack/parcel/you name it will split the chunks for you).
+You can see complete example here [examples/dynamicImport](examples/dynamicImport)
 
 ### Preparation
 
@@ -119,7 +119,9 @@ export type Languages = 'en' | 'ru'
 export type Resource = EnResource
 
 export const resources: ResourceRecord<Languages, Resource> = {
+  // Harnessing the power of dynamic imports
   en: () => import('./en').then(r => r.enResources),
+  // In fact it's not neccessary for all keys to be dynamically imported, you can mix then in any way
   ru: () => import('./ru').then(r => r.ruResources),
 }
 
@@ -170,13 +172,17 @@ const App: React.SFC<{}> = () => (
 ## Consumer render prop
 
 `l: (keyof Resource | (r: Resource) => React.ReactNode) => React.ReactNode`
+
 the `localize` function, your best friend and ally in this internationalized world
 
 `lang: Languages` 
+
 Current selected language
 
 `onLangChange: (newLang: Languages) => void`
+
 Selected language callback
 
 `isLoadingLang: boolean`
+
 Indication whether selected language is loading at the moment
