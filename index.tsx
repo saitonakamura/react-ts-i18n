@@ -19,12 +19,17 @@ interface FetchResourceFunc<TResource> {
   (): Promise<TResource>
 }
 
+export type ResourceRecord<
+  TLangs extends keyof any,
+  TResource extends object
+> = Record<TLangs, TResource | FetchResourceFunc<TResource>>
+
 export interface LangProviderProps<
   TLangs extends keyof any,
   TResource extends object
 > {
   initialLang: TLangs
-  initialResources: Record<TLangs, TResource | FetchResourceFunc<TResource>>
+  initialResources: ResourceRecord<TLangs, TResource>
 }
 
 interface LangProviderState<
@@ -44,7 +49,7 @@ export class LangProvider<
   LangProviderProps<TLangs, TResource>,
   LangProviderState<TLangs, TResource>
 > {
-  private resources: LangProviderProps<TLangs, TResource>['initialResources']
+  private resources: ResourceRecord<TLangs, TResource>
 
   constructor(props: LangProviderProps<TLangs, TResource>) {
     super(props)
@@ -60,36 +65,38 @@ export class LangProvider<
 
     const selectedResouce = this.resources[props.initialLang]
     if (this.isFetchFunc(selectedResouce)) {
-      ;(this.state as any).isLoadingLang = true
+      ;(this.state as LangProviderState<TLangs, TResource>).isLoadingLang = true
+
       this.enrichResources(selectedResouce, props.initialLang).then(() =>
         this.setState({ isLoadingLang: false }),
       )
     }
   }
 
-  isKeyof(
+  private isKeyof(
     key: keyof TResource | ResourseProviderFunc<TResource>,
   ): key is keyof TResource {
     return typeof key === 'string'
   }
 
-  isObject(
+  private isObject(
     resource: TResource | FetchResourceFunc<TResource>,
   ): resource is TResource {
     return typeof resource === 'object'
   }
 
-  isFetchFunc(
+  private isFetchFunc(
     resource: TResource | FetchResourceFunc<TResource>,
   ): resource is FetchResourceFunc<TResource> {
     return resource instanceof Function
   }
 
-  handleLangChange = (newLang: TLangs) => {
+  private handleLangChange = (newLang: TLangs) => {
     const resource = this.resources[newLang]
 
     if (this.isFetchFunc(resource)) {
       this.setState({ isLoadingLang: true })
+
       this.enrichResources(resource, newLang).then(() =>
         this.setState({ lang: newLang, isLoadingLang: false }),
       )
@@ -98,12 +105,15 @@ export class LangProvider<
     }
   }
 
-  enrichResources = (resource: FetchResourceFunc<TResource>, lang: TLangs) =>
+  private enrichResources = (
+    resource: FetchResourceFunc<TResource>,
+    lang: TLangs,
+  ) =>
     resource().then(res => {
       this.resources = { ...(this.resources as any), [lang]: res }
     })
 
-  localize: LocalizeFunc<TResource> = key => {
+  private localize: LocalizeFunc<TResource> = key => {
     const { lang } = this.state
     const resource = this.resources[lang]
 

@@ -1,4 +1,4 @@
-import { LangProvider, LangConsumer, LangProviderProps } from '../../index'
+import { LangProvider, LangConsumer, ResourceRecord } from '../../index'
 
 const enResources = {
   title: 'Home page',
@@ -17,10 +17,7 @@ const ruResources: Resource = {
 type Languages = 'en' | 'ru'
 type Resource = typeof enResources
 
-export const resources: LangProviderProps<
-  Languages,
-  Resource
->['initialResources'] = {
+export const resources: ResourceRecord<Languages, Resource> = {
   en: enResources,
   ru: ruResources,
 }

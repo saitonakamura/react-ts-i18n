@@ -1,13 +1,10 @@
-import { LangProvider, LangConsumer, LangProviderProps } from '../../index'
+import { LangProvider, LangConsumer, ResourceRecord } from '../../index'
 import { EnResource } from './en'
 
 export type Languages = 'en' | 'ru'
 export type Resource = EnResource
 
-export const resources: LangProviderProps<
-  Languages,
-  Resource
->['initialResources'] = {
+export const resources: ResourceRecord<Languages, Resource> = {
   en: () => import('./en').then(r => r.enResources),
   ru: () => import('./ru').then(r => r.ruResources),
 }

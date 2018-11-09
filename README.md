@@ -13,7 +13,11 @@ So I build a tiny wrapper over react context api which allows you to pass your r
 npm i react-ts-i18n
 ```
 
-## Usage
+## Basic Usage
+
+> :warn: Though basic setup is a good place to start from, I really recommend you to pay attention to (#advanced-usage)
+
+You can see complete example here (examples/basic)
 
 ### Preparation
 
@@ -23,7 +27,7 @@ So let's create your wrapper over the base one.
 `i18n.ts`
 
 ```typescript
-import { LangProvider, LangConsumer, LangProviderProps } from 'react-ts-i18n'
+import { LangProvider, LangConsumer, ResourceRecord } from 'react-ts-i18n'
 
 // Here hoes our so-called reference resource
 // We'll be using as a shape for all another resources
@@ -47,16 +51,13 @@ export class MyLangProvider extends LangProvider<Languages, Resource> {}
 export class MyLangConsumer extends LangConsumer<Languages, Resource> {}
 
 // Resources dictionary to be passed to Provider as initialResources
-export const resources: LangProviderProps<
-  Languages,
-  Resource
->['initialResources'] = {
+export const resources: ResourceRecord<Languages, Resource> = {
   en: enResources,
   ru: ruResources,
 }
 ```
 
-### Real Usage
+### App Usage
 
 ```typescript
 import React from 'react'
@@ -79,9 +80,103 @@ const App: React.SFC<{}> = () => (
       <h1>{l('title')}</h1>
       {/* You can use expressions */}
       <h1>{l(r => r.title)}</h1>
-      {/* In fact your the king over your resource object, so you can do whatever you want */}
-      <h1>{l(r => r.someInterolationFunction(10))}</h1>
+      {/* In fact you're the king over your resource object, so you can do whatever you want */}
+      <h1>{l(r => r.someInterpolationFunction(10))}</h1>
     )}
   </MyLangConsumer>
 )
 ```
+
+## Advanced usage
+
+Basic examples are nice, but of course we want real world cases, when resources can be splitted by the different files and can be loaded dynamically (you don't want to load ALL available languages from the start, are you?)
+The advanced configuration is that instead of static imports we use can pass a function that returnes a Promise that has our resource?
+ES2017 `dynamic import` feature is an obvious way to go (webpack/parcel/you name it will split the chunks for you)
+You can see complete example here (examples/dynamicImport)
+
+### Preparation
+
+`en.ts`
+
+```typescript
+// Reference resource
+export const enResources = {
+  title: 'Home page',
+}
+
+// Exporting type be statically imported and used
+export type EnResource = typeof enResources
+```
+
+`i18n.ts`
+
+```typescript
+import { LangProvider, LangConsumer, ResourceRecord } from 'react-ts-i18n'
+// Statically importing only type here (so it's not gonna affect the bundle)
+import { EnResource } from './en'
+
+export type Languages = 'en' | 'ru'
+export type Resource = EnResource
+
+export const resources: ResourceRecord<Languages, Resource> = {
+  en: () => import('./en').then(r => r.enResources),
+  ru: () => import('./ru').then(r => r.ruResources),
+}
+
+export class MyLangProvider extends LangProvider<Languages, Resource> {}
+export class MyLangConsumer extends LangConsumer<Languages, Resource> {}
+```
+
+`ru.ts`
+
+```typescript
+// Again statically importing only the type (otherwise you're gonna stumble into circular dependency problems)
+import { Resource } from './i18n'
+
+export const ruResources: Resource = {
+  title: 'Домашняя страница',
+}
+```
+
+### App Usage
+
+```typescript
+import React from 'react'
+import { MyLangProvider, MyLangConsumer, resources } from './i18n'
+
+// Since resources would be dynamically loaded we need to show some loader
+// You probably want to place it closer to the root,
+// since the language will be changed all across the application
+const Root: React.SFC<{}> = () => (
+  <MyLangProvider initialLang="en" initialResources={resources}>
+    <MyLangConsumer>
+      {/* render prop has isLoadingLang boolean to indicate if language is in the loading process */}
+      {({ isLoadingLang }) =>
+        isLoadingLang
+          ? <div>Translations are loading...</div>
+          : <App />
+      }
+    </MyLangConsumer>
+  </MyLangProvider>
+)
+
+// Nothing changes from the l function consumer perspective
+// language will be changed when promise will be resolved
+const App: React.SFC<{}> = () => (
+  <MyLangConsumer>{({ l }) => <h1>{l('title')}</h1>}</MyLangConsumer>
+)
+```
+
+## Consumer render prop
+
+`l: (keyof Resource | (r: Resource) => React.ReactNode) => React.ReactNode`
+the `localize` function, your best friend and ally in this internationalized world
+
+`lang: Languages` 
+Current selected language
+
+`onLangChange: (newLang: Languages) => void`
+Selected language callback
+
+`isLoadingLang: boolean`
+Indication whether selected language is loading at the moment
