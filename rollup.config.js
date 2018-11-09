@@ -1,25 +1,17 @@
-import typescript from "rollup-plugin-typescript2";
+import typescript from 'rollup-plugin-typescript2'
 
-const input = "./index.tsx";
-const externals = ["react"];
-
-export default [
-  {
-    entry: input,
-    output: {
-      file: "./dist/index.js",
-      format: "cjs"
+export default {
+  input: './index.tsx',
+  output: [
+    {
+      file: './dist/index.js',
+      format: 'cjs',
     },
-    external: externals,
-    plugins: [typescript()]
-  },
-  {
-    entry: input,
-    output: {
-      file: "./dist/index.es.js",
-      format: "es"
+    {
+      file: './dist/index.es.js',
+      format: 'es',
     },
-    external: externals,
-    plugins: [typescript()]
-  }
-];
+  ],
+  external: ['react'],
+  plugins: [typescript()],
+}
