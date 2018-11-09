@@ -9,7 +9,7 @@ interface LocalizeFunc<TResource> {
 }
 
 const LangContext = React.createContext({ 
-  l: (_: any) => '' as React.ReactNode,
+  l: (key: any) => key.toString() as React.ReactNode,
   lang: 'en' as any,
   onLangChange: (_: any) => {}
 });

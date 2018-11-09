@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "esnext",
     "jsx": "react",
     "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     //"declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
